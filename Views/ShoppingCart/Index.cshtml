@@ -1,0 +1,169 @@
+@model List<testmvc.ModelViews.CartItem>
+@{
+    ViewData["Title"] = "Xem giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = Context.Request.Query["ReturnUrl"];
+}
+
+<body>
+    <div class="page-holder">
+        <div class="container">
+            <!-- HERO SECTION-->
+            <section class="py-5 bg-light">
+                <div class="container">
+                    <div class="row px-4 px-lg-5 py-lg-4 align-items-center">
+                        <div class="col-lg-6">
+                            <h1 class="h2 text-uppercase mb-0">Cart</h1>
+                        </div>
+                        <div class="col-lg-6 text-lg-end">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-lg-end mb-0 px-0 bg-light">
+                                    <li class="breadcrumb-item"><a class="text-dark" href="/">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Cart</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-5">
+                <h2 class="h5 text-uppercase mb-4">Shopping cart</h2>
+                <div class="row">
+                    <div class="col-lg-8 mb-4 mb-lg-0">
+                        <!-- CART TABLE-->
+                        <div class="table-responsive mb-4">
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                <table class="table text-nowrap">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Product</strong></th>
+                                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Price</strong></th>
+                                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase">Quantity</strong></th>
+                                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase"> Sub Total</strong></th>
+                                            <th class="border-0 p-3" scope="col"> <strong class="text-sm text-uppercase"></strong></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="border-0">
+                                        @if (Model != null && Model.Count() > 0)
+                                        {
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <th class="ps-0 py-3 border-light" scope="row">
+                                                        <div class="d-flex align-items-center">
+                                                            <a class="reset-anchor d-block animsition-link" href="javascript:void(0)"><img src="~/images/products/@item.product.Thump" alt="@item.product.Title" width="70" /></a>
+                                                            <div class="ms-3"><strong class="h6"><a class="reset-anchor animsition-link" href="javascript:void(0)">@item.product.ProductName</a></strong></div>
+                                                        </div>
+                                                    </th>
+                                                    <td class="p-3 align-middle border-light">
+                                                        <p class="mb-0 small">@item.product.Price.Value.ToString("#,##0") VNĐ</p>
+                                                    </td>
+                                                    <td class="p-3 align-middle border-light">
+                                                        <div class="border d-flex align-items-center justify-content-between px-3">
+                                                            <span class="small text-uppercase text-gray headings-font-family">Quantity</span>
+                                                            <div class="quantity">
+                                                                <input class="form-control form-control-sm border-0 shadow-0 p-0 cartItem cart-plus-minus-box" data-mahh="@item.product.ProductID" data-dongia="@item.product.Price" value="@item.amount" min="1" type="number" />
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="p-3 align-middle border-light">
+                                                        <p class="mb-0 small">@item.TotalMoney.ToString("#,##0") VNĐ</p>
+                                                    </td>
+                                                    <td class="p-3 align-middle border-light"><input type="button" value="X" class="removecart btn btn-primary" data-mahh="@item.product.ProductID" /></td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <span class="small text-uppercase text-gray headings-font-family">Chưa có hàng hóa trong giỏ hàng.Bạn hãy tích cực mua sắm đi nào</span>
+                            }
+                        </div>
+                        <!-- CART NAV-->
+                        <div class="bg-light px-4 py-3">
+                            <div class="row align-items-center text-center">
+                                <div class="col-md-6 mb-3 mb-md-0 text-md-start"><a class="btn btn-link p-0 text-dark btn-sm" href="shop.html"><i class="fas fa-long-arrow-alt-left me-2"> </i>Continue shopping</a></div>
+                                <div class="col-md-6 text-md-end">
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <a class="btn btn-outline-dark btn-sm" href="/checkout.html">Procceed to checkout<i class="fas fa-long-arrow-alt-right ms-2"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-outline-dark btn-sm" href="/dang-nhap.html?returnUrl=/checkout.html">Procceed to checkout<i class="fas fa-long-arrow-alt-right ms-2"></i></a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ORDER TOTAL-->
+                    <div class="col-lg-4">
+                        <div class="card border-0 rounded-0 p-lg-4 bg-light">
+                            <div class="card-body">
+                                <h5 class="text-uppercase mb-4">Cart total</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="border-bottom my-2"></li>
+                                    <li class="d-flex align-items-center justify-content-between mb-4"><strong class="text-uppercase small font-weight-bold">Total</strong><span>@Model.Sum(x => x.TotalMoney).ToString("#,##0") VNĐ</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+@section Scripts{
+    <script>
+        $(function () {
+            function loadHeaderCart() {
+                $('#miniCart').load("/AjaxContent/HeaderCart");
+                $('#numberCart').load("/AjaxContent/NumberCart");
+            }
+            $(".removecart").click(function () {
+                var ProductID = $(this).attr("data-mahh");
+                $.ajax({
+                    url: "api/cart/remove",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { ProductID: ProductID },
+                    success: function (result) {
+                        if (result.success) {
+                            loadHeaderCart();//Reload lai gio hang
+                            location.reload();
+                        }
+                    },
+                    error: function (rs) {
+                        alert("Remove Cart Error !")
+                    }
+                });
+            });
+            $(".cartItem").click(function () {
+                var ProductID = $(this).attr("data-mahh");
+                var soluong = parseInt($(this).val());
+                $.ajax({
+                    url: "api/cart/update",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        ProductID: ProductID,
+                        amount: soluong
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            loadHeaderCart();//Reload lai gio hang
+                            window.location = 'cart.html';
+                        }
+                    },
+                    error: function (rs) {
+                        alert("Cập nhật Cart Error !")
+                    }
+                });
+            });
+        });
+    </script>
+}

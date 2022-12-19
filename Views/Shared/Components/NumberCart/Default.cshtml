@@ -1,0 +1,12 @@
+@page
+@model testmvc.Views.Shared.Components.NumberCart.DefaultModel
+@{
+    ViewData["Title"] = "Default";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Default</h1>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
